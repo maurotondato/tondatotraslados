@@ -508,6 +508,7 @@ h2.section__title { font-size: var(--step-h2); }
 .nav__panel.is-open li:nth-child(4) a { animation-delay: .26s; }
 .nav__panel.is-open li:nth-child(5) a { animation-delay: .32s; }
 .nav__panel.is-open li:nth-child(6) a { animation-delay: .38s; }
+.nav__panel.is-open li:nth-child(7) a { animation-delay: .44s; }
 @keyframes navIn { to { opacity: 1; translate: 0 0; } }
 
 .nav__panel-foot { display: grid; gap: 12px; margin-top: 34px; }
@@ -519,7 +520,7 @@ body.is-locked { overflow: hidden; }
 body.is-locked .floaters { opacity: 0; pointer-events: none; }
 .floaters { transition: opacity .3s var(--ease-soft); }
 
-@media (max-width: 1040px) {
+@media (max-width: 1200px) {
   .nav__links, .nav__tel { display: none; }
   .nav__burger { display: block; }
 }
@@ -561,19 +562,22 @@ body.is-locked .floaters { opacity: 0; pointer-events: none; }
   position: absolute;
   inset: 0;
   transform-style: preserve-3d;
-  /* --d  desplazamiento por puntero · --ds por scroll · --z profundidad
-     --k  corrige la escala que introduce translateZ, para que las tres capas
-          sigan calzando exactamente como en la fotografía original        */
+  /* --d  desplazamiento horizontal por puntero · --dv el vertical, mucho menor
+     para que las capas no parezcan levantarse · --ds arrastre por scroll
+     --z  profundidad · --k corrige la escala que introduce translateZ, para
+     que las capas sigan calzando como en la fotografía original            */
   transform:
     translate3d(calc(var(--mx, 0px) * var(--d)),
-                calc(var(--my, 0px) * var(--d) + var(--sy, 0px) * var(--ds)),
+                calc(var(--my, 0px) * var(--dv) + var(--sy, 0px) * var(--ds)),
                 var(--z))
     scale(var(--k));
 }
-.hero__plane--city   { --d: .22; --ds: .10; --z: -200px; --k: 1.1429; }
-.hero__plane--trails { --d: .55; --ds: .35; --z:  -70px; --k: 1.05;   }
-.hero__plane--pin    { --d: 1.1; --ds: .70; --z:   60px; --k: .9571;  }
-.hero__plane--car    { --d: 1.5; --ds: 1.0; --z:  170px; --k: .8786;  }
+.hero__plane--city   { --d: .22; --dv: .10; --ds: .10; --z: -200px; --k: 1.1429; }
+.hero__plane--trails { --d: .55; --dv: .22; --ds: .30; --z:  -70px; --k: 1.05;   }
+.hero__plane--pin    { --d: 1.1; --dv: .80; --ds: .70; --z:   60px; --k: .9571;  }
+/* El auto acompaña al asfalto en vertical (mismo --ds que la ciudad): así su
+   único movimiento propio es el de alejarse, que es el escalado de más abajo */
+.hero__plane--car    { --d: 1.5; --dv: .16; --ds: .10; --z:  170px; --k: .8786;  }
 
 /* Marco 16:9 recortado en «cover»: fija el sistema de coordenadas para que
    el auto y el pin se anclen al mismo sitio en cualquier pantalla. */
@@ -594,6 +598,15 @@ body.is-locked .floaters { opacity: 0; pointer-events: none; }
 /* Anclajes medidos sobre el original de 1920 × 1080 */
 .hero__pin { position: absolute; left: 63.698%; top: 18.796%; width: 11.198%; }
 .hero__car { position: absolute; left: 10.573%; top: 48.241%; width: 27.813%; }
+
+/* El auto se aleja por la calle en lugar de subir: al reducir su escala tomando
+   como centro el punto de fuga de la avenida (que cae justo sobre su borde
+   derecho), se desplaza hacia el fondo siguiendo la dirección del asfalto. */
+.hero__car {
+  transform-origin: 100% 40.9%;
+  transform: scale(var(--drive, 1));
+  will-change: transform;
+}
 .hero__pin img, .hero__car img { width: 100%; }
 
 .hero__pin img {
@@ -871,7 +884,7 @@ body.is-locked .floaters { opacity: 0; pointer-events: none; }
 }
 .stat {
   position: relative;
-  padding: clamp(30px, 4vw, 46px) clamp(22px, 3vw, 34px);
+  padding: clamp(30px, 4vw, 46px) clamp(14px, 1.8vw, 24px);
   background: var(--ink-850);
   text-align: center;
   transition: background-color .45s var(--ease-soft);
@@ -883,10 +896,12 @@ body.is-locked .floaters { opacity: 0; pointer-events: none; }
   justify-content: center;
   gap: 2px;
   font-family: 'Montserrat', sans-serif;
-  font-size: clamp(2.4rem, 1.4rem + 3.2vw, 3.9rem);
+  /* Ajustado para que «1.000.000+» entre completo en su columna */
+  font-size: clamp(1.9rem, 1.05rem + 2.5vw, 3.1rem);
   font-weight: 900;
-  letter-spacing: -.04em;
+  letter-spacing: -.045em;
   line-height: 1;
+  white-space: nowrap;
   font-variant-numeric: tabular-nums;
   background: linear-gradient(160deg, #fff 20%, var(--brand-400));
   -webkit-background-clip: text;
@@ -1319,15 +1334,17 @@ body.is-locked .floaters { opacity: 0; pointer-events: none; }
   animation: slide 38s linear infinite;
 }
 .clients__viewport:hover .clients__track { animation-play-state: paused; }
+.clients__track picture { display: block; }
+/* Caja de tamaño fijo: los logotipos vienen en blanco y con anchos muy distintos,
+   así todos ocupan lo mismo y el conjunto se lee parejo. */
 .clients__track img {
-  height: clamp(56px, 7vw, 82px);
-  width: auto;
-  /* Aplana cualquier logotipo a blanco: se ven todos como un set coherente */
-  filter: brightness(0) invert(1);
-  opacity: .46;
-  transition: opacity .4s var(--ease-soft), filter .4s var(--ease-soft), scale .4s var(--ease-out);
+  height: clamp(44px, 5.2vw, 62px);
+  width: clamp(120px, 15vw, 178px);
+  object-fit: contain;
+  opacity: .5;
+  transition: opacity .4s var(--ease-soft), scale .4s var(--ease-out);
 }
-.clients__track img:hover { opacity: 1; filter: none; scale: 1.06; }
+.clients__track img:hover { opacity: 1; scale: 1.07; }
 
 /* ============================== 16. FAQ ============================= */
 .faq { background: var(--ink-850); }
@@ -1532,6 +1549,9 @@ body.is-locked .floaters { opacity: 0; pointer-events: none; }
 }
 .socials .icon { width: 18px; height: 18px; }
 
+.footer__bottom a { color: var(--fg-muted); transition: color .3s var(--ease-soft); }
+.footer__bottom a:hover { color: var(--brand-300); }
+
 .footer__bottom {
   display: flex;
   flex-wrap: wrap;
@@ -1632,3 +1652,65 @@ body.is-locked .floaters { opacity: 0; pointer-events: none; }
 .no-js [data-reveal] { opacity: 1; translate: none; scale: 1; filter: none; }
 .no-js .hero__title .line > span { translate: 0; rotate: none; opacity: 1; }
 .no-js :is(.hero .eyebrow, .hero__lead, .hero__cta, .hero__trust) { opacity: 1; translate: none; }
+
+/* ===================== 19. Páginas internas ========================= */
+.page-hero {
+  position: relative;
+  padding-block: calc(var(--nav-h) + clamp(56px, 8vw, 96px)) clamp(40px, 5vw, 64px);
+  overflow: hidden;
+  background: radial-gradient(90% 130% at 18% 0%, rgba(237, 43, 144, .17), transparent 62%), var(--ink-900);
+  border-bottom: 1px solid var(--line);
+}
+.page-hero h1 {
+  font-size: clamp(2.1rem, 1.3rem + 2.8vw, 3.5rem);
+  font-weight: 900;
+  letter-spacing: -.035em;
+}
+.page-hero p { max-width: 62ch; margin-top: 18px; color: var(--fg-muted); font-size: 1.08rem; }
+
+.crumbs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 22px;
+  padding: 0;
+  list-style: none;
+  font-size: .84rem;
+  color: var(--fg-dim);
+}
+.crumbs li + li::before { content: "/"; margin-right: 8px; opacity: .5; }
+.crumbs a:hover { color: var(--brand-300); }
+
+.prose { max-width: 74ch; }
+.prose > * + * { margin-top: 20px; }
+.prose h2 {
+  margin-top: clamp(40px, 5vw, 60px);
+  font-size: clamp(1.4rem, 1.15rem + .9vw, 1.85rem);
+}
+.prose h3 { margin-top: 32px; font-size: 1.14rem; }
+.prose p, .prose li { color: var(--fg-muted); }
+.prose strong { color: var(--fg); font-weight: 700; }
+.prose a { color: var(--brand-300); text-decoration: underline; text-underline-offset: 3px; }
+.prose a:hover { color: var(--brand-400); }
+.prose ul, .prose ol { padding-left: 22px; display: grid; gap: 10px; }
+.prose li::marker { color: var(--brand-500); }
+.prose hr { margin-block: clamp(36px, 4vw, 52px); }
+
+.callout {
+  padding: 22px 26px;
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--brand-500);
+  border-radius: var(--r-md);
+  background: var(--glass);
+}
+.callout p { color: var(--fg-muted); font-size: .95rem; }
+
+.page-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 330px);
+  gap: clamp(34px, 5vw, 70px);
+  align-items: start;
+}
+@media (max-width: 900px) { .page-layout { grid-template-columns: 1fr; } }
+.page-aside { display: grid; gap: 14px; position: sticky; top: calc(var(--nav-h) + 20px); }
+@media (max-width: 900px) { .page-aside { position: static; } }

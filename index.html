@@ -45,7 +45,7 @@
   "@context": "https://schema.org",
   "@graph": [
     {
-      "@type": ["LocalBusiness", "TaxiService"],
+      "@type": ["Organization", "LocalBusiness", "TaxiService"],
       "@id": "https://www.trasladostondato.com.ar/#business",
       "name": "Tondato Traslados",
       "alternateName": "Tondato Remises",
@@ -66,6 +66,29 @@
         "addressCountry": "AR"
       },
       "geo": { "@type": "GeoCoordinates", "latitude": -35.168, "longitude": -58.2188 },
+      "contactPoint": [
+        {
+          "@type": "ContactPoint",
+          "contactType": "customer service",
+          "name": "Reservas y presupuestos",
+          "telephone": "+54-9-2223-431190",
+          "email": "tondatoremises@hotmail.com",
+          "availableLanguage": ["es-AR", "es"],
+          "areaServed": "AR",
+          "url": "https://www.trasladostondato.com.ar/contacto/"
+        },
+        {
+          "@type": "ContactPoint",
+          "contactType": "sales",
+          "name": "Empresas, ART y obras sociales",
+          "email": "tondatoremises@hotmail.com",
+          "telephone": "+54-9-2223-431190",
+          "availableLanguage": ["es-AR", "es"],
+          "areaServed": "AR"
+        }
+      ],
+      "knowsLanguage": ["es-AR"],
+      "currenciesAccepted": "ARS",
       "areaServed": [
         { "@type": "Country", "name": "Argentina" },
         { "@type": "City", "name": "Brandsen" },
@@ -75,6 +98,11 @@
         { "@type": "City", "name": "Mar del Plata" }
       ],
       "sameAs": ["https://www.facebook.com", "https://www.instagram.com"],
+      "subjectOf": [
+        { "@type": "WebPage", "name": "Nosotros", "url": "https://www.trasladostondato.com.ar/nosotros/" },
+        { "@type": "WebPage", "name": "Contacto", "url": "https://www.trasladostondato.com.ar/contacto/" },
+        { "@type": "WebPage", "name": "Política de privacidad", "url": "https://www.trasladostondato.com.ar/privacidad/" }
+      ],
       "hasOfferCatalog": {
         "@type": "OfferCatalog",
         "name": "Servicios de traslado",
@@ -116,7 +144,7 @@
       "mainEntity": [
         { "@type": "Question", "name": "¿Cómo pido un presupuesto?",
           "acceptedAnswer": { "@type": "Answer", "text": "Podés completar el formulario de la web con el origen, el destino y la fecha, o escribirnos directamente por WhatsApp. Te respondemos con el valor del viaje y la disponibilidad." } },
-        { "@type": "Question", "name": "¿Hacen traslados de larga distancia?",
+        { "@type": "Question", "name": "¿Hacen viajes de larga distancia?",
           "acceptedAnswer": { "@type": "Answer", "text": "Sí. Trabajamos desde Brandsen hacia cualquier punto del país, incluidos aeropuertos de Ezeiza y Aeroparque y la Costa Atlántica." } },
         { "@type": "Question", "name": "¿Trabajan con obras sociales y ART?",
           "acceptedAnswer": { "@type": "Answer", "text": "Sí. Realizamos traslados de pacientes para turnos médicos, tratamientos y estudios, y viajes para empresas y aseguradoras de riesgos de trabajo." } },
@@ -172,6 +200,7 @@
 
     <nav aria-label="Navegación principal">
       <ul class="nav__links" id="nav-links">
+        <li><a href="/nosotros/">Nosotros</a></li>
         <li><a href="#servicios">Servicios</a></li>
         <li><a href="#proceso">Cómo trabajamos</a></li>
         <li><a href="#cobertura">Cobertura</a></li>
@@ -198,12 +227,13 @@
 <div class="nav__panel" id="nav-panel">
   <nav aria-label="Navegación móvil">
     <ul>
-      <li><a href="#servicios"><span class="num">01</span>Servicios</a></li>
-      <li><a href="#proceso"><span class="num">02</span>Cómo trabajamos</a></li>
-      <li><a href="#cobertura"><span class="num">03</span>Cobertura</a></li>
-      <li><a href="#presupuesto"><span class="num">04</span>Presupuesto</a></li>
-      <li><a href="#opiniones"><span class="num">05</span>Opiniones</a></li>
-      <li><a href="#contacto"><span class="num">06</span>Contacto</a></li>
+      <li><a href="/nosotros/"><span class="num">01</span>Nosotros</a></li>
+      <li><a href="#servicios"><span class="num">02</span>Servicios</a></li>
+      <li><a href="#proceso"><span class="num">03</span>Cómo trabajamos</a></li>
+      <li><a href="#cobertura"><span class="num">04</span>Cobertura</a></li>
+      <li><a href="#presupuesto"><span class="num">05</span>Presupuesto</a></li>
+      <li><a href="#opiniones"><span class="num">06</span>Opiniones</a></li>
+      <li><a href="/contacto/"><span class="num">07</span>Contacto</a></li>
     </ul>
   </nav>
   <div class="nav__panel-foot">
@@ -766,22 +796,64 @@
     </header>
   </div>
   <div class="clients__viewport" data-reveal="up">
-    <div class="clients__track" aria-hidden="true">
-      <img src="img/cliente1.svg" width="160" height="82" loading="lazy" alt="">
-      <img src="img/cliente2.svg" width="160" height="82" loading="lazy" alt="">
-      <img src="img/cliente3.svg" width="160" height="82" loading="lazy" alt="">
-      <img src="img/cliente4.svg" width="160" height="82" loading="lazy" alt="">
-      <img src="img/cliente5.svg" width="160" height="82" loading="lazy" alt="">
-      <img src="img/cliente6.svg" width="160" height="82" loading="lazy" alt="">
-      <img src="img/cliente7.svg" width="160" height="82" loading="lazy" alt="">
-      <img src="img/cliente1.svg" width="160" height="82" loading="lazy" alt="">
-      <img src="img/cliente2.svg" width="160" height="82" loading="lazy" alt="">
-      <img src="img/cliente3.svg" width="160" height="82" loading="lazy" alt="">
-      <img src="img/cliente4.svg" width="160" height="82" loading="lazy" alt="">
-      <img src="img/cliente5.svg" width="160" height="82" loading="lazy" alt="">
-      <img src="img/cliente6.svg" width="160" height="82" loading="lazy" alt="">
-      <img src="img/cliente7.svg" width="160" height="82" loading="lazy" alt="">
-    </div>
+    <div class="clients__track">
+        <picture>
+          <source srcset="img/cliente1.webp" type="image/webp">
+          <img src="img/cliente1.png" width="190" height="58" loading="lazy" alt="UDEC Emergencias Médicas">
+        </picture>
+        <picture>
+          <source srcset="img/cliente2.webp" type="image/webp">
+          <img src="img/cliente2.png" width="190" height="58" loading="lazy" alt="Supernova">
+        </picture>
+        <picture>
+          <source srcset="img/cliente3.webp" type="image/webp">
+          <img src="img/cliente3.png" width="190" height="58" loading="lazy" alt="OSDE">
+        </picture>
+        <picture>
+          <source srcset="img/cliente4.webp" type="image/webp">
+          <img src="img/cliente4.png" width="190" height="58" loading="lazy" alt="Emergencias">
+        </picture>
+        <picture>
+          <source srcset="img/cliente5.webp" type="image/webp">
+          <img src="img/cliente5.png" width="190" height="58" loading="lazy" alt="IOMA">
+        </picture>
+        <picture>
+          <source srcset="img/cliente6.webp" type="image/webp">
+          <img src="img/cliente6.png" width="190" height="58" loading="lazy" alt="SUM Servicio de Urgencias Médicas">
+        </picture>
+        <picture>
+          <source srcset="img/cliente7.webp" type="image/webp">
+          <img src="img/cliente7.png" width="190" height="58" loading="lazy" alt="ASE">
+        </picture>
+        <picture>
+          <source srcset="img/cliente1.webp" type="image/webp">
+          <img src="img/cliente1.png" width="190" height="58" loading="lazy" alt="UDEC Emergencias Médicas">
+        </picture>
+        <picture>
+          <source srcset="img/cliente2.webp" type="image/webp">
+          <img src="img/cliente2.png" width="190" height="58" loading="lazy" alt="Supernova">
+        </picture>
+        <picture>
+          <source srcset="img/cliente3.webp" type="image/webp">
+          <img src="img/cliente3.png" width="190" height="58" loading="lazy" alt="OSDE">
+        </picture>
+        <picture>
+          <source srcset="img/cliente4.webp" type="image/webp">
+          <img src="img/cliente4.png" width="190" height="58" loading="lazy" alt="Emergencias">
+        </picture>
+        <picture>
+          <source srcset="img/cliente5.webp" type="image/webp">
+          <img src="img/cliente5.png" width="190" height="58" loading="lazy" alt="IOMA">
+        </picture>
+        <picture>
+          <source srcset="img/cliente6.webp" type="image/webp">
+          <img src="img/cliente6.png" width="190" height="58" loading="lazy" alt="SUM Servicio de Urgencias Médicas">
+        </picture>
+        <picture>
+          <source srcset="img/cliente7.webp" type="image/webp">
+          <img src="img/cliente7.png" width="190" height="58" loading="lazy" alt="ASE">
+        </picture>
+      </div>
   </div>
 </section>
 
@@ -803,6 +875,7 @@
             directamente por WhatsApp. Te respondemos con el valor del viaje y la disponibilidad.</p></div>
         </div>
       </div>
+
 
       <div class="faq__item">
         <button class="faq__q" type="button" aria-expanded="false" aria-controls="faq-2" id="faq-b-2">
@@ -954,7 +1027,8 @@
         <h3 id="f-nav">Navegación</h3>
         <ul>
           <li><a href="#inicio">Inicio</a></li>
-          <li><a href="#servicios">Servicios</a></li>
+          <li><a href="/nosotros/">Nosotros</a></li>
+        <li><a href="#servicios">Servicios</a></li>
           <li><a href="#proceso">Cómo trabajamos</a></li>
           <li><a href="#cobertura">Cobertura</a></li>
           <li><a href="#faq">Preguntas frecuentes</a></li>
@@ -984,7 +1058,7 @@
 
     <div class="footer__bottom">
       <p>&copy; <span id="year">2026</span> Tondato Traslados. Todos los derechos reservados.</p>
-      <p>Brandsen, Provincia de Buenos Aires</p>
+      <p><a href="/nosotros/">Nosotros</a> · <a href="/contacto/">Contacto</a> · <a href="/privacidad/">Política de privacidad</a></p>
     </div>
   </div>
 </footer>
@@ -1002,7 +1076,5 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js" defer></script>
 <script src="assets/js/main.js" defer></script>
-<script src="https://cdn.botpress.cloud/webchat/v3.2/inject.js" defer></script>
-<script src="https://files.bpcontent.cloud/2025/09/09/21/20250909212137-V8EEO3D1.js" defer></script>
 </body>
 </html>

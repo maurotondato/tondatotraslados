@@ -113,7 +113,7 @@
         else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
       });
       window.addEventListener('resize', function () {
-        if (window.innerWidth > 1040 && burger.getAttribute('aria-expanded') === 'true') setMenu(false);
+        if (window.innerWidth > 1200 && burger.getAttribute('aria-expanded') === 'true') setMenu(false);
       });
     }
 
@@ -122,7 +122,11 @@
     if (links.length && 'IntersectionObserver' in window) {
       var map = {};
       links.forEach(function (a) {
-        var sec = document.querySelector(a.getAttribute('href'));
+        /* En las páginas internas los enlaces son "/#seccion": ahí no hay
+           nada que resaltar y "/#…" no es un selector válido. */
+        var href = a.getAttribute('href') || '';
+        if (href.charAt(0) !== '#' || href.length < 2) return;
+        var sec = document.getElementById(href.slice(1));
         if (sec) map[sec.id] = a;
       });
       var spy = new IntersectionObserver(function (entries) {
@@ -185,7 +189,7 @@
       current.x = lerp(current.x, target.x, 0.055);
       current.y = lerp(current.y, target.y, 0.055);
 
-      scene.style.setProperty('--mx', (current.x * 13).toFixed(2) + 'px');
+      scene.style.setProperty('--mx', (current.x * 14).toFixed(2) + 'px');
       scene.style.setProperty('--my', (current.y * 9).toFixed(2) + 'px');
       scene.style.setProperty('--tilt-x', (current.x * 2.1).toFixed(3));
       scene.style.setProperty('--tilt-y', (-current.y * 1.5).toFixed(3));
@@ -216,6 +220,9 @@
         var p = clamp((window.scrollY || window.pageYOffset) / h, 0, 1);
         scene.style.setProperty('--sy', (p * -90).toFixed(1) + 'px');
         scene.style.setProperty('--dolly', (1 + p * 0.08).toFixed(4));
+        /* El auto se aleja por la avenida: encoge tomando como centro el punto
+           de fuga, así avanza hacia el fondo en vez de levantarse. */
+        scene.style.setProperty('--drive', (1 - p * 0.2).toFixed(4));
         if (inner) {
           inner.style.opacity = String(clamp(1 - p * 1.5, 0, 1));
           inner.style.translate = '0 ' + (p * 60).toFixed(1) + 'px';
@@ -234,82 +241,151 @@
     var ctx = canvas.getContext('2d', { alpha: true });
     if (!ctx) return;
 
-    /* Punto de fuga medido sobre la fotografía original (1920 × 1080) */
-    var VPX = 900 / 1920, VPY = 645 / 1080;
-    /* Carriles: dónde cruza cada estela el borde inferior del encuadre */
-    var LANES = [-0.06, 0.09, 0.24, 0.39, 0.57, 0.73, 0.9, 1.06];
+    /* Punto de fuga y direcciones medidos sobre la fotografía original con una
+       transformada de Hough: las estelas que dibujamos siguen exactamente los
+       mismos rayos que las que ya están pintadas en la foto. */
+    var VPX = 0.3838, VPY = 0.5967;
+    var RAYS = [
+      { deg:   2.09, w: 0.09 },
+      { deg:  16.15, w: 0.20 },
+      { deg:  45.26, w: 0.28 },
+      { deg:  82.54, w: 0.21 },
+      { deg: 141.56, w: 0.11 },
+      { deg: 170.62, w: 0.11 }
+    ];
+    var TOTAL = RAYS.reduce(function (a, r) { return a + r.w; }, 0);
 
-    var W = 0, H = 0, dpr = 1, streaks = [], raf = 0, visible = true, last = 0;
+    /* Ventanas encendidas de los edificios, tomadas de la misma fotografía */
+    var WINDOWS = [0.082,0.516,0.120,0.487,0.135,0.530,0.143,0.292,0.154,0.252,0.166,0.343,
+      0.173,0.456,0.188,0.291,0.208,0.405,0.220,0.503,0.234,0.465,0.247,0.552,0.299,0.548,
+      0.304,0.504,0.312,0.297,0.312,0.424,0.313,0.361,0.352,0.541,0.361,0.495,0.367,0.397,
+      0.371,0.329,0.391,0.110,0.396,0.523,0.407,0.214,0.420,0.420,0.420,0.169,0.429,0.256,
+      0.441,0.084,0.457,0.323,0.458,0.533,0.461,0.205,0.525,0.501,0.627,0.187,0.655,0.374,
+      0.677,0.277,0.690,0.522,0.695,0.111,0.700,0.355,0.718,0.077,0.746,0.438,0.804,0.506,
+      0.807,0.363];
+
+    /* Fachadas ya iluminadas en la foto: les damos un pulso lento */
+    var FACADES = [
+      { x: 0.4427, y: 0.2634, r: 0.11, i: 0.30, s: 0.21 },
+      { x: 0.4078, y: 0.3681, r: 0.06, i: 0.18, s: 0.31 },
+      { x: 0.8779, y: 0.4074, r: 0.07, i: 0.16, s: 0.26 }
+    ];
+
+    var W = 0, H = 0, dpr = 1, streaks = [], lights = [];
+    var raf = 0, visible = true, last = 0, clock = 0;
 
     function resize() {
       var r = canvas.getBoundingClientRect();
       if (!r.width || !r.height) return;
-      dpr = Math.min(window.devicePixelRatio || 1, 1.75);
-      W = Math.round(r.width  * dpr);
+      dpr = Math.min(window.devicePixelRatio || 1, 1.6);
+      W = Math.round(r.width * dpr);
       H = Math.round(r.height * dpr);
       if (canvas.width !== W || canvas.height !== H) { canvas.width = W; canvas.height = H; }
     }
 
+    function pickRay() {
+      var v = Math.random() * TOTAL;
+      for (var i = 0; i < RAYS.length; i++) { v -= RAYS[i].w; if (v <= 0) return RAYS[i]; }
+      return RAYS[0];
+    }
+
     function spawn(seed) {
+      var ray = pickRay();
+      var deg = ray.deg + (Math.random() - 0.5) * 2.4;   /* apenas de dispersión */
+      var rad = deg * Math.PI / 180;
       return {
-        lane: LANES[(Math.random() * LANES.length) | 0] + (Math.random() - 0.5) * 0.05,
-        t: seed ? Math.random() : 0,
-        speed: 0.085 + Math.random() * 0.16,
-        len: 0.10 + Math.random() * 0.17,
-        width: 0.7 + Math.random() * 0.9,
-        warm: Math.random() < 0.3
+        dx: Math.cos(rad), dy: Math.sin(rad),
+        t: seed ? Math.random() * 1.1 : 0,
+        speed: 0.085 + Math.random() * 0.19,
+        len: 0.09 + Math.random() * 0.19,
+        width: 0.55 + Math.random() * 0.95,
+        warm: Math.random() < 0.28
       };
     }
 
-    for (var i = 0; i < 15; i++) streaks.push(spawn(true));
+    /* Distancia del punto de fuga al borde del encuadre a lo largo del rayo:
+       así t = 1 siempre significa «salió de cuadro», venga por donde venga. */
+    function reach(s) {
+      var px = VPX * W, py = VPY * H, best = Infinity, t;
+      if (s.dx > 1e-6) { t = (W - px) / (s.dx * W); if (t < best) best = t; }
+      if (s.dx < -1e-6) { t = -px / (s.dx * W); if (t < best) best = t; }
+      if (s.dy > 1e-6) { t = (H - py) / (s.dy * H); if (t < best) best = t; }
+      if (s.dy < -1e-6) { t = -py / (s.dy * H); if (t < best) best = t; }
+      return best === Infinity ? 1 : best;
+    }
 
-    /* Coordenadas de un punto de la estela, en píxeles del canvas */
-    function at(s, t) {
-      var e = Math.pow(clamp(t, 0, 1), 2.45);
-      return {
-        x: (VPX + (s.lane - VPX) * e) * W,
-        y: (VPY + (1 - VPY) * e) * H,
-        e: e
-      };
+    function at(s, t, L) {
+      var e = Math.pow(clamp(t, 0, 1), 2.4);           /* acelera al acercarse */
+      return { x: VPX * W + s.dx * W * L * e, y: VPY * H + s.dy * H * L * e, e: e };
+    }
+
+    for (var i = 0; i < 26; i++) streaks.push(spawn(true));
+    for (var j = 0; j < WINDOWS.length; j += 2) {
+      lights.push({ x: WINDOWS[j], y: WINDOWS[j + 1],
+                    ph: Math.random() * 6.283, sp: 0.5 + Math.random() * 1.5,
+                    warm: Math.random() < 0.72 });
     }
 
     function draw(now) {
       raf = 0;
       if (!visible) return;
       var dt = Math.min((now - last) / 1000, 0.05) || 0.016;
-      last = now;
+      last = now; clock += dt;
 
       ctx.clearRect(0, 0, W, H);
       ctx.globalCompositeOperation = 'lighter';
+
+      /* --- fachadas: respiran despacio --- */
+      for (var f = 0; f < FACADES.length; f++) {
+        var F = FACADES[f];
+        var pulse = F.i * (0.45 + 0.55 * (0.5 + 0.5 * Math.sin(clock * F.s * 2.2 + f)));
+        var rr = F.r * W;
+        var g = ctx.createRadialGradient(F.x * W, F.y * H, 0, F.x * W, F.y * H, rr);
+        g.addColorStop(0, 'rgba(255,70,160,' + (pulse * 0.5).toFixed(3) + ')');
+        g.addColorStop(0.45, 'rgba(230,40,140,' + (pulse * 0.18).toFixed(3) + ')');
+        g.addColorStop(1, 'rgba(200,30,120,0)');
+        ctx.fillStyle = g;
+        ctx.beginPath(); ctx.arc(F.x * W, F.y * H, rr, 0, 6.283); ctx.fill();
+      }
+
+      /* --- ventanas: parpadeo muy leve --- */
+      var px = 1.5 * dpr;
+      for (var k = 0; k < lights.length; k++) {
+        var l = lights[k];
+        var tw = 0.5 + 0.5 * Math.sin(clock * l.sp + l.ph);
+        var alpha = 0.05 + 0.22 * Math.pow(tw, 3);
+        ctx.fillStyle = l.warm
+          ? 'rgba(255,205,140,' + alpha.toFixed(3) + ')'
+          : 'rgba(255,120,185,' + alpha.toFixed(3) + ')';
+        ctx.fillRect(l.x * W - px, l.y * H - px, px * 2.4, px * 2.8);
+      }
+
+      /* --- estelas de la calzada --- */
       ctx.lineCap = 'round';
-
-      for (var i = 0; i < streaks.length; i++) {
-        var s = streaks[i];
+      for (var i2 = 0; i2 < streaks.length; i2++) {
+        var s = streaks[i2];
         s.t += s.speed * dt;
-        if (s.t - s.len > 1.05) { streaks[i] = spawn(false); continue; }
+        if (s.t - s.len > 1.08) { streaks[i2] = spawn(false); continue; }
 
-        var head = at(s, s.t);
-        var tail = at(s, s.t - s.len);
+        var L = reach(s);
+        var head = at(s, s.t, L);
+        var tail = at(s, s.t - s.len, L);
         if (head.e <= 0) continue;
 
-        var fade = Math.min(1, head.e * 3.2) * (1 - clamp((s.t - 1) / 0.25, 0, 1));
+        var fade = Math.min(1, head.e * 3.4) * (1 - clamp((s.t - 1) / 0.22, 0, 1));
         if (fade <= 0.01) continue;
 
-        var g = ctx.createLinearGradient(tail.x, tail.y, head.x, head.y);
         var core = s.warm ? '255,110,150' : '255,45,140';
-        g.addColorStop(0, 'rgba(' + core + ',0)');
-        g.addColorStop(0.55, 'rgba(' + core + ',' + (0.24 * fade).toFixed(3) + ')');
-        g.addColorStop(1, 'rgba(255,190,225,' + (0.5 * fade).toFixed(3) + ')');
+        var gr = ctx.createLinearGradient(tail.x, tail.y, head.x, head.y);
+        gr.addColorStop(0, 'rgba(' + core + ',0)');
+        gr.addColorStop(0.55, 'rgba(' + core + ',' + (0.22 * fade).toFixed(3) + ')');
+        gr.addColorStop(1, 'rgba(255,190,225,' + (0.48 * fade).toFixed(3) + ')');
 
-        var w = (1 + 13 * head.e * head.e) * s.width * dpr;
-
-        /* Halo ancho y difuso */
-        ctx.strokeStyle = g;
-        ctx.globalAlpha = 0.42;
+        var w = (1 + 12 * head.e * head.e) * s.width * dpr;
+        ctx.strokeStyle = gr;
+        ctx.globalAlpha = 0.4;
         ctx.lineWidth = w * 3.1;
         ctx.beginPath(); ctx.moveTo(tail.x, tail.y); ctx.lineTo(head.x, head.y); ctx.stroke();
-
-        /* Núcleo brillante */
         ctx.globalAlpha = 1;
         ctx.lineWidth = w;
         ctx.beginPath(); ctx.moveTo(tail.x, tail.y); ctx.lineTo(head.x, head.y); ctx.stroke();
@@ -555,16 +631,5 @@
     var year = $('#year');
     if (year) year.textContent = String(new Date().getFullYear());
 
-    /* El chat de Botpress se va a la izquierda para no tapar WhatsApp */
-    function moveChat() {
-      var el = document.getElementById('botpress-webchat-container') ||
-               document.querySelector('.bpFab, #bp-web-widget-container');
-      if (!el) return;
-      el.style.right = 'auto';
-      el.style.left = '20px';
-      el.style.bottom = '20px';
-      el.style.zIndex = '940';
-    }
-    [400, 1200, 2600].forEach(function (ms) { setTimeout(moveChat, ms); });
   })();
 })();

@@ -2,3 +2,5 @@ User-agent: *
 Allow: /
 
 Sitemap: https://www.trasladostondato.com.ar/sitemap.xml
+
+# Guía para agentes: https://www.trasladostondato.com.ar/llms.txt

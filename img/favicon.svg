@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Tondato Traslados">
+  <defs>
+    <linearGradient id="g" x1="14" y1="8" x2="52" y2="58" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FF63BC"/>
+      <stop offset="1" stop-color="#CE1878"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="#0B0A11"/>
+  <path d="M46.54 34.80 A17 17 0 1 0 17.46 34.80 L32.00 58.81 Z" fill="url(#g)"/>
+  <circle cx="32" cy="26" r="11.5" fill="#0B0A11"/>
+  <!-- Auto de frente. Sin faros calados: a 16 px se empastan y ensucian la silueta. -->
+  <g fill="#FFFFFF">
+    <path d="M27.0 19.2h10a1.7 1.7 0 0 1 1.57 1.06L40.1 24H23.9l1.53-3.74A1.7 1.7 0 0 1 27.0 19.2z"/>
+    <rect x="22.6" y="24.4" width="18.8" height="5.6" rx="1.9"/>
+    <rect x="24.1" y="29.5" width="4.1" height="2.2" rx="1.1"/>
+    <rect x="35.8" y="29.5" width="4.1" height="2.2" rx="1.1"/>
+  </g>
+</svg>

@@ -1,7 +1,7 @@
 # Tondato Traslados
 
 Sitio web de **Tondato Traslados** — remises y traslados desde Brandsen (Buenos Aires)
-a todo el país. Publicado en <https://www.tondatotraslados.com.ar>.
+a todo el país. Publicado en <https://tondatotraslados.com.ar>.
 
 Es un sitio estático: HTML, CSS y JavaScript sin framework, sin build y sin
 dependencias que instalar. Se sirve tal cual está desde GitHub Pages.
@@ -29,16 +29,22 @@ y abrí <http://localhost:8000>.
 
 GitHub Pages republica el sitio solo, en uno o dos minutos.
 
-> **Dominio propio.** El archivo `CNAME` contiene `www.tondatotraslados.com.ar`.
+> **Dominio propio.** El archivo `CNAME` contiene `tondatotraslados.com.ar`.
 > Es lo que le dice a GitHub Pages en qué dominio servir el sitio: **no lo borres**.
-> Si alguna vez querés que el principal sea el dominio sin `www`, cambiá esa línea
-> por `tondatotraslados.com.ar` y actualizá los `canonical`, el `sitemap.xml`, el
-> `llms.txt` y el bloque de datos estructurados del `<head>` de `index.html`, que
-> hoy apuntan a la versión con `www`.
+> El dominio principal es la raíz, sin `www`, igual que el sitio anterior: así las
+> direcciones que Google ya tiene indexadas siguen siendo válidas. El `www` redirige
+> solo. Si alguna vez querés invertirlo, cambiá esa línea por
+> `www.tondatotraslados.com.ar` y actualizá los `canonical`, el `sitemap.xml`, el
+> `llms.txt` y el bloque de datos estructurados del `<head>` de `index.html`.
 
-> **El DNS del dominio no está en Don Web.** Los servidores de nombres son de
-> Netlify (`dns1.p04.nsone.net` y siguientes), así que los registros hay que
-> cargarlos en el panel de Netlify. Cargarlos en Don Web no tiene efecto.
+> **Dónde va el DNS.** Los registros hay que cargarlos en el panel de quien sea
+> el DNS autoritativo del dominio, que es el que figura en la delegación de NIC.ar.
+> Para comprobarlo: `dig NS tondatotraslados.com.ar +short`. Cargarlos en otro
+> panel no tiene ningún efecto.
+>
+> Los registros que espera GitHub Pages son cuatro `A` en la raíz
+> (`185.199.108.153`, `.109.153`, `.110.153`, `.111.153`) y un `CNAME` en `www`
+> apuntando a `maurotondato.github.io`.
 
 ---
 
@@ -157,7 +163,7 @@ Además del SEO clásico, el sitio está preparado para que lo lean asistentes d
   publicado se comprueba así:
 
   ```bash
-  curl -s -o /dev/null -w "%{http_code}\n" https://www.tondatotraslados.com.ar/ruta-inexistente
+  curl -s -o /dev/null -w "%{http_code}\n" https://tondatotraslados.com.ar/ruta-inexistente
   ```
 
 ### Lo que no se puede hacer desde acá

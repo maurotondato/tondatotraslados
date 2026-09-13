@@ -1,7 +1,7 @@
 # Tondato Traslados
 
 Sitio web de **Tondato Traslados** — remises y traslados desde Brandsen (Buenos Aires)
-a todo el país. Publicado en <https://www.trasladostondato.com.ar>.
+a todo el país. Publicado en <https://www.tondatotraslados.com.ar>.
 
 Es un sitio estático: HTML, CSS y JavaScript sin framework, sin build y sin
 dependencias que instalar. Se sirve tal cual está desde GitHub Pages.
@@ -29,12 +29,16 @@ y abrí <http://localhost:8000>.
 
 GitHub Pages republica el sitio solo, en uno o dos minutos.
 
-> **Dominio propio.** El archivo `CNAME` se borró del repositorio. Si el dominio
-> `trasladostondato.com.ar` está configurado desde *Settings → Pages → Custom
-> domain*, GitHub lo vuelve a crear solo y no hay nada que hacer. Si al publicar el
-> sitio queda en `maurotondato.github.io`, hay que volver a cargar el dominio ahí o
-> recrear el archivo `CNAME` en la raíz con una sola línea:
-> `www.trasladostondato.com.ar`.
+> **Dominio propio.** El archivo `CNAME` contiene `www.tondatotraslados.com.ar`.
+> Es lo que le dice a GitHub Pages en qué dominio servir el sitio: **no lo borres**.
+> Si alguna vez querés que el principal sea el dominio sin `www`, cambiá esa línea
+> por `tondatotraslados.com.ar` y actualizá los `canonical`, el `sitemap.xml`, el
+> `llms.txt` y el bloque de datos estructurados del `<head>` de `index.html`, que
+> hoy apuntan a la versión con `www`.
+
+> **El DNS del dominio no está en Don Web.** Los servidores de nombres son de
+> Netlify (`dns1.p04.nsone.net` y siguientes), así que los registros hay que
+> cargarlos en el panel de Netlify. Cargarlos en Don Web no tiene efecto.
 
 ---
 
@@ -153,7 +157,7 @@ Además del SEO clásico, el sitio está preparado para que lo lean asistentes d
   publicado se comprueba así:
 
   ```bash
-  curl -s -o /dev/null -w "%{http_code}\n" https://www.trasladostondato.com.ar/ruta-inexistente
+  curl -s -o /dev/null -w "%{http_code}\n" https://www.tondatotraslados.com.ar/ruta-inexistente
   ```
 
 ### Lo que no se puede hacer desde acá

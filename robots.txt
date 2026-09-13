@@ -1,6 +1,6 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://www.trasladostondato.com.ar/sitemap.xml
+Sitemap: https://www.tondatotraslados.com.ar/sitemap.xml
 
-# Guía para agentes: https://www.trasladostondato.com.ar/llms.txt
+# Guía para agentes: https://www.tondatotraslados.com.ar/llms.txt

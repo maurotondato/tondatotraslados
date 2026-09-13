@@ -246,12 +246,13 @@
        mismos rayos que las que ya están pintadas en la foto. */
     var VPX = 0.3838, VPY = 0.5967;
     var RAYS = [
-      { deg:   2.09, w: 0.09 },
-      { deg:  16.15, w: 0.20 },
-      { deg:  45.26, w: 0.28 },
-      { deg:  82.54, w: 0.21 },
-      { deg: 141.56, w: 0.11 },
-      { deg: 170.62, w: 0.11 }
+      /* El rayo de 2,09° se quitó a propósito: corría casi horizontal por la
+         vereda de la derecha, fuera de la calzada, y se veía suelto. */
+      { deg:  16.15, w: 0.22 },
+      { deg:  45.26, w: 0.30 },
+      { deg:  82.54, w: 0.23 },
+      { deg: 141.56, w: 0.12 },
+      { deg: 170.62, w: 0.13 }
     ];
     var TOTAL = RAYS.reduce(function (a, r) { return a + r.w; }, 0);
 

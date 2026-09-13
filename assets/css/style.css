@@ -191,10 +191,10 @@ p { text-wrap: pretty; }
   margin-inline: auto;
 }
 
-.section { position: relative; padding-block: clamp(72px, 9vw, 132px); }
-.section--tight { padding-block: clamp(56px, 6vw, 88px); }
+.section { position: relative; padding-block: clamp(52px, 6.4vw, 94px) clamp(72px, 9vw, 132px); }
+.section--tight { padding-block: clamp(40px, 4.4vw, 64px) clamp(56px, 6vw, 88px); }
 
-.section__head { max-width: 62ch; margin-bottom: clamp(36px, 4.5vw, 64px); }
+.section__head { max-width: 62ch; margin-bottom: clamp(30px, 3.6vw, 52px); }
 .section__head--center { margin-inline: auto; text-align: center; }
 
 .eyebrow {
@@ -380,8 +380,9 @@ h2.section__title { font-size: var(--step-h2); }
 }
 
 .nav__logo { flex: none; margin-right: auto; }
+.nav__logo { min-width: 0; }
 .nav__logo img {
-  height: clamp(34px, 3.4vw, 44px);
+  height: clamp(32px, 2.9vw, 42px);
   width: auto;
   transition: height .4s var(--ease-out);
 }
@@ -393,6 +394,7 @@ h2.section__title { font-size: var(--step-h2); }
   gap: 4px;
   list-style: none;
   padding: 0;
+  flex: none;          /* sin esto los ítems se encogen y el texto parte en dos líneas */
 }
 .nav__links a {
   position: relative;
@@ -401,6 +403,7 @@ h2.section__title { font-size: var(--step-h2); }
   border-radius: var(--r-pill);
   font-size: .94rem;
   font-weight: 600;
+  white-space: nowrap;
   color: var(--fg-muted);
   transition: color .3s var(--ease-soft), background-color .3s var(--ease-soft);
 }
@@ -418,7 +421,7 @@ h2.section__title { font-size: var(--step-h2); }
 .nav__links a[aria-current="true"] { color: var(--fg); }
 .nav__links a[aria-current="true"]::after { scale: 1 1; }
 
-.nav__actions { display: flex; align-items: center; gap: 10px; }
+.nav__actions { display: flex; align-items: center; gap: 10px; flex: none; }
 .nav__tel {
   display: inline-flex;
   align-items: center;
@@ -428,6 +431,7 @@ h2.section__title { font-size: var(--step-h2); }
   border-radius: var(--r-pill);
   font-size: .9rem;
   font-weight: 700;
+  white-space: nowrap;
   color: var(--fg);
   transition: border-color .3s, background-color .3s;
 }
@@ -520,7 +524,8 @@ body.is-locked { overflow: hidden; }
 body.is-locked .floaters { opacity: 0; pointer-events: none; }
 .floaters { transition: opacity .3s var(--ease-soft); }
 
-@media (max-width: 1200px) {
+/* Con seis enlaces más teléfono y botón, por debajo de esto ya no entra cómodo */
+@media (max-width: 1260px) {
   .nav__links, .nav__tel { display: none; }
   .nav__burger { display: block; }
 }
@@ -648,6 +653,7 @@ body.is-locked .floaters { opacity: 0; pointer-events: none; }
   100% { translate: 0 0; }
 }
 
+.hero__content > * { min-width: 0; }
 .hero__content {
   position: relative;
   z-index: 3;
@@ -781,10 +787,32 @@ body.is-locked .floaters { opacity: 0; pointer-events: none; }
    de pantalla en cada rango.                                              */
 @media (max-aspect-ratio: 5/4) {
   .hero { min-height: auto; }
+
+  /* El marco 16:9 anclado abajo dejaba media pantalla de negro liso arriba.
+     Se rellena con la misma fotografía, desenfocada y oscurecida, para que el
+     degradado lea como atmósfera y no como un hueco. */
+  .hero::before {
+    content: "";
+    position: absolute;
+    inset: -8%;
+    z-index: 0;
+    /* Estirada a todo el alto, no recortada: así el fondo sigue la progresión
+       vertical real de la foto (cielo arriba, edificios, asfalto abajo). Con el
+       desenfoque la deformación es invisible. */
+    background: url('../../img/hero-city-640.webp') center / 100% 100% no-repeat;
+    filter: blur(30px) brightness(.78) saturate(1.1);
+    opacity: .95;
+    pointer-events: none;
+  }
+  .hero__stage { z-index: 1; }
+  .hero__grade { z-index: 2; }
+  .hero__grain { z-index: 3; }
+  .hero__content { z-index: 4; }
+
   .hero__content {
     min-height: auto;
     align-content: start;
-    padding-block: calc(var(--nav-h) + 34px) clamp(250px, 41vw, 430px);
+    padding-block: calc(var(--nav-h) + 26px) clamp(230px, 38vw, 400px);
   }
   .hero__frame {
     width: 135%;
@@ -799,29 +827,44 @@ body.is-locked .floaters { opacity: 0; pointer-events: none; }
 
   /* El marco anclado abajo deja un canto recto arriba: se funde con el fondo */
   .hero__city {
-    -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 15%);
-            mask-image: linear-gradient(180deg, transparent 0, #000 15%);
+    -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 22%);
+            mask-image: linear-gradient(180deg, transparent 0, #000 22%);
   }
 
   /* Degradado pensado para leer arriba y dejar ver el auto abajo */
   .hero__grade {
     background:
-      linear-gradient(180deg, rgba(7, 6, 11, .92) 0%, rgba(7, 6, 11, .76) 32%, transparent 60%),
-      linear-gradient(0deg, var(--ink-900) 0%, transparent 26%);
+      linear-gradient(180deg, rgba(7, 6, 11, .74) 0%, rgba(7, 6, 11, .5) 40%, transparent 68%),
+      linear-gradient(0deg, var(--ink-900) 0%, transparent 22%);
   }
 }
 
 @media (max-aspect-ratio: 5/4) and (max-width: 780px) {
-  .hero__content { padding-block: calc(var(--nav-h) + 30px) clamp(236px, 48vw, 340px); }
+  /* El bloque de texto era tan alto que empujaba la fotografía fuera de la
+     primera pantalla. Acá se compacta para que la foto entre sin scroll. */
+  .hero__content { padding-block: calc(var(--nav-h) + 22px) clamp(220px, 44vw, 320px); }
   .hero__frame { width: 190%; left: 83.5%; }
   @supports (width: 1cqw) { .hero__frame { width: 190cqw; } }
 
+  .hero .eyebrow { display: none; }
   .hero__title { max-width: 14ch; }
-  .hero__lead { font-size: 1rem; }
-  .hero__cta { margin-top: 28px; }
-  .hero__cta .btn { width: 100%; }
-  .hero__trust { gap: 8px; margin-top: 26px; }
-  .hero__trust li { padding: 7px 13px; font-size: .78rem; }
+  .hero__lead { margin-top: 16px; font-size: .98rem; max-width: 34ch; }
+  .hero__cta { margin-top: 24px; gap: 10px; }
+  .hero__cta .btn { width: 100%; padding-block: 15px; }
+
+  /* Una sola fila que se desplaza, en lugar de dos que roban alto */
+  .hero__trust {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    gap: 8px;
+    margin-top: 22px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-mask-image: linear-gradient(90deg, #000 88%, transparent);
+            mask-image: linear-gradient(90deg, #000 88%, transparent);
+  }
+  .hero__trust::-webkit-scrollbar { display: none; }
+  .hero__trust li { flex: none; padding: 7px 13px; font-size: .78rem; }
 }
 
 @media (max-aspect-ratio: 5/4) and (max-width: 430px) {
@@ -938,14 +981,18 @@ body.is-locked .floaters { opacity: 0; pointer-events: none; }
 
 .service__media {
   position: relative;
-  aspect-ratio: 4 / 3;
+  /* 5:4 y el foco casi arriba: el pin de neón de las fotos arranca a 23 px del
+     borde superior y con un recorte centrado quedaba cortado por la mitad. */
+  aspect-ratio: 5 / 4;
   overflow: hidden;
   background: var(--ink-800);
 }
 .service__media img {
   width: 100%; height: 100%;
   object-fit: cover;
+  object-position: center 14%;
   scale: 1.02;
+  transform-origin: center 14%;
   transition: scale 1s var(--ease-out), filter .6s var(--ease-soft);
 }
 .service:hover .service__media img { scale: 1.09; filter: saturate(1.12); }

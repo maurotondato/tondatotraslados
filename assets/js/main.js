@@ -113,7 +113,7 @@
         else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
       });
       window.addEventListener('resize', function () {
-        if (window.innerWidth > 1200 && burger.getAttribute('aria-expanded') === 'true') setMenu(false);
+        if (window.innerWidth > 1260 && burger.getAttribute('aria-expanded') === 'true') setMenu(false);
       });
     }
 

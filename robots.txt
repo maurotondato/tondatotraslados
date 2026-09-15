@@ -2,5 +2,6 @@ User-agent: *
 Allow: /
 
 Sitemap: https://tondatotraslados.com.ar/sitemap.xml
+Sitemap: https://tondatotraslados.com.ar/sitemap.txt
 
 # Guía para agentes: https://tondatotraslados.com.ar/llms.txt

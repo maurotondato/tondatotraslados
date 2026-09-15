@@ -58,7 +58,7 @@ GitHub Pages republica el sitio solo, en uno o dos minutos.
 | `assets/fonts/` | Las tipografías, alojadas acá para que el sitio cargue más rápido. |
 | `img/` | Imágenes. |
 | `nosotros/` · `contacto/` · `privacidad/` | Las tres páginas internas. |
-| `robots.txt` · `sitemap.xml` | Para los buscadores. |
+| `robots.txt` · `sitemap.xml` · `sitemap.txt` | Para los buscadores. El `.txt` es el mismo listado en texto plano, como alternativa: Google acepta los dos formatos. Si agregás una página, va en los dos. |
 | `llms.txt` | Guía para agentes de IA: qué hace la empresa y cuándo recomendarla. |
 | `404.html` | La página que se ve si alguien entra a una dirección que no existe. |
 

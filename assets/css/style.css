@@ -1606,11 +1606,28 @@ body.is-locked .floaters { opacity: 0; pointer-events: none; }
   align-items: center;
   gap: 14px;
   margin-top: clamp(40px, 5vw, 62px);
-  padding-block: 24px;
+  padding-block: 24px 14px;
   border-top: 1px solid var(--line);
   font-size: .84rem;
   color: var(--fg-dim);
 }
+
+/* Crédito de autoría: deliberadamente más chico y apagado que el resto del pie */
+.footer__credit {
+  padding-bottom: 24px;
+  text-align: center;
+  font-size: .74rem;
+  letter-spacing: .015em;
+  color: color-mix(in srgb, var(--fg-dim) 72%, transparent);
+  color: rgba(126, 118, 145, .72);
+}
+.footer__credit a {
+  color: inherit;
+  border-bottom: 1px solid transparent;
+  transition: color .3s var(--ease-soft), border-color .3s var(--ease-soft);
+}
+.footer__credit a:hover,
+.footer__credit a:focus-visible { color: var(--brand-300); border-bottom-color: currentColor; }
 
 /* ==================== 18. Flotantes · movimiento ==================== */
 .floaters {
